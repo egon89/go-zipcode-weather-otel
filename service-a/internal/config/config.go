@@ -10,6 +10,7 @@ import (
 var (
 	Port                  string
 	ZipcodeWeatherBaseURL string
+	OtelCollectorHost     string
 )
 
 func LoadEnv() {
@@ -19,6 +20,7 @@ func LoadEnv() {
 
 	Port = GetEnv("PORT", "8080")
 	ZipcodeWeatherBaseURL = GetEnv("ZIPCODE_WEATHER_BASE_URL", "")
+	OtelCollectorHost = GetEnv("OTEL_COLLECTOR_HOST", "")
 }
 
 func GetEnv(key, fallback string) string {
