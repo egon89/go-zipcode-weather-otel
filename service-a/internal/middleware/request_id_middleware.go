@@ -7,9 +7,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type ctxKey int
+type CtxKey int
 
-const ridKey ctxKey = ctxKey(0)
+const ridKey CtxKey = CtxKey(0)
 
 func RequestId(next http.Handler) http.Handler {
 	fn := func(rw http.ResponseWriter, r *http.Request) {

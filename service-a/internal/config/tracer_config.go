@@ -14,6 +14,7 @@ import (
 )
 
 func InitTracer() func() {
+	log.Printf("initializing tracing to %s\n", OtelCollectorHost)
 	ctx := context.Background()
 
 	exporter, err := otlptracehttp.New(ctx,
@@ -21,7 +22,7 @@ func InitTracer() func() {
 		otlptracehttp.WithInsecure(),
 	)
 	if err != nil {
-		log.Fatalf("error creating otlp trace exporter: %v", err)
+		log.Fatalf("error creating otlp trace exporter in %s: %v", OtelCollectorHost, err)
 	}
 
 	tp := trace.NewTracerProvider(
@@ -36,7 +37,7 @@ func InitTracer() func() {
 
 	return func() {
 		if err := tp.Shutdown(ctx); err != nil {
-			log.Printf("error terminating tracer provider: %v", err)
+			log.Printf("error finishing tracing: %v", err)
 		}
 	}
 }

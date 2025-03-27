@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/egon89/go-zipcode-weather-gateway/internal/usecase"
+	"github.com/egon89/go-zipcode-weather-gateway/internal/util"
 )
 
 type WeatherHandler struct {
@@ -29,13 +30,17 @@ func NewWeatherHandler(getWeatherByZipcode usecase.GetWeatherByZipcodeInterface)
 }
 
 func (h *WeatherHandler) WeatherByZipcode(w http.ResponseWriter, r *http.Request) {
+	ctx, span := util.StartSpan(r.Context())
+	span.SetAttributes(util.RequestIdToAttribute(ctx))
+	defer span.End()
+
 	var req WeatherRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 
-	output, err := h.usecase.Execute(req.Zipcode)
+	output, err := h.usecase.Execute(ctx, req.Zipcode)
 	if err != nil {
 		HandlerHttpError(w, err)
 		return

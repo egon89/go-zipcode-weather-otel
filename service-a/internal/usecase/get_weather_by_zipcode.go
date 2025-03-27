@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"log"
 	"regexp"
 
@@ -20,7 +21,7 @@ type GetWeatherByZipcodeOutputDto struct {
 }
 
 type GetWeatherByZipcodeInterface interface {
-	Execute(zipcode string) (GetWeatherByZipcodeOutputDto, error)
+	Execute(ctx context.Context, zipcode string) (GetWeatherByZipcodeOutputDto, error)
 }
 
 func NewGetWeatherByZipcode(zipcodeWeatherPort port.ZipcodeWeatherPort) *GetWeatherByZipcode {
@@ -29,12 +30,12 @@ func NewGetWeatherByZipcode(zipcodeWeatherPort port.ZipcodeWeatherPort) *GetWeat
 	}
 }
 
-func (g *GetWeatherByZipcode) Execute(zipcode string) (GetWeatherByZipcodeOutputDto, error) {
+func (g *GetWeatherByZipcode) Execute(ctx context.Context, zipcode string) (GetWeatherByZipcodeOutputDto, error) {
 	if err := g.validateZipcode(zipcode); err != nil {
 		return GetWeatherByZipcodeOutputDto{}, err
 	}
 
-	weather, err := g.ZipcodeWeatherPort.GetWeatherByZipcode(zipcode)
+	weather, err := g.ZipcodeWeatherPort.GetWeatherByZipcode(ctx, zipcode)
 	if err != nil {
 		log.Printf("error getting weather by zipcode %s: %v\n", zipcode, err)
 		return GetWeatherByZipcodeOutputDto{}, err

@@ -1,6 +1,10 @@
 package port
 
-import "github.com/egon89/go-zipcode-weather-gateway/internal/entity"
+import (
+	"context"
+
+	"github.com/egon89/go-zipcode-weather-gateway/internal/entity"
+)
 
 type ZipcodeWeatherPortResponse struct {
 	City           string  `json:"city"`
@@ -10,5 +14,5 @@ type ZipcodeWeatherPortResponse struct {
 }
 
 type ZipcodeWeatherPort interface {
-	GetWeatherByZipcode(zipcode string) (entity.Weather, error)
+	GetWeatherByZipcode(ctx context.Context, zipcode string) (entity.Weather, error)
 }
