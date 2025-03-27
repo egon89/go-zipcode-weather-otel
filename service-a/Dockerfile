@@ -4,6 +4,6 @@ WORKDIR /app
 COPY . .
 
 RUN go mod download -x
-RUN go build -o svcb ./cmd/main.go
+RUN go build -o svca ./cmd/main.go
 
-CMD ["./svcb"]
+CMD ["./svca"]

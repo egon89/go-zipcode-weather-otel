@@ -1,4 +1,27 @@
 services:
+  service-a:
+    build: 
+      context: ./service-a
+      dockerfile: Dockerfile
+    env_file:
+      - ./service-a/.env
+    ports:
+      - "8081:8081"
+    depends_on:
+      - service-b
+      - otel-collector
+
+  service-b:
+    build:
+      context: ./service-b
+      dockerfile: Dockerfile
+    env_file:
+      - ./service-b/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - otel-collector
+
   zipkin:
     image: openzipkin/zipkin
     ports:
