@@ -28,8 +28,8 @@ func NewWeatherHandler(getWeatherByZipcode usecase.GetWeatherByZipcodeInterface)
 
 func (h *WeatherHandler) GetWeather(w http.ResponseWriter, r *http.Request) {
 	ctx, span := utils.StartSpan(r.Context())
-	span.SetAttributes(utils.RequestIdToAttribute(ctx))
 	defer span.End()
+	span.SetAttributes(utils.RequestIdToAttribute(ctx))
 
 	zipcodeStr := chi.URLParam(r, "zipcode")
 

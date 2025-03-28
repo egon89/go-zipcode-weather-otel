@@ -30,6 +30,9 @@ func (wa *WeatherApiAdapter) GetTemperatureByCity(ctx context.Context, city stri
 	defer adapterSpan.End()
 	adapterSpan.SetAttributes(attribute.String("city", city))
 
+	adapterSpan.AddEvent("getting temperature by city adapter started")
+	defer adapterSpan.AddEvent("getting temperature by city adapter finished")
+
 	escapedCity := url.QueryEscape(city)
 	url := fmt.Sprintf("%s/v1/current.json?key=%s&q=%s", config.WeatherAPIBaseURL, config.WeatherAPIKey, escapedCity)
 

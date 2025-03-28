@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"regexp"
+	"time"
 
 	"github.com/egon89/go-zipcode-weather/internal/entity"
 	"github.com/egon89/go-zipcode-weather/internal/errors"
@@ -40,9 +41,14 @@ func (g *GetWeatherByZipcode) Execute(ctx context.Context, zipcode string) (GetW
 		return GetWeatherByZipcodeOutputDto{}, err
 	}
 
+	time.Sleep(10 * time.Millisecond) // simulate a delay to show the span start difference in zipkin graph
+
 	ctxUseCase, adapterSpan := utils.StartSpan(ctx)
 	defer adapterSpan.End()
 	adapterSpan.SetAttributes(attribute.String("zipcode", zipcode))
+
+	adapterSpan.AddEvent("getting weather by zipcode usecase started")
+	defer adapterSpan.AddEvent("getting weather by zipcode usecase finished")
 
 	city, err := g.LocationPort.GetCityNameByZipcode(ctxUseCase, zipcode)
 	if err != nil {

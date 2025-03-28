@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/egon89/go-zipcode-weather-gateway/internal/config"
 	"github.com/egon89/go-zipcode-weather-gateway/internal/entity"
@@ -23,9 +24,14 @@ func NewZipcodeWeatherAdapter() *ZipcodeWeatherAdapter {
 }
 
 func (z *ZipcodeWeatherAdapter) GetWeatherByZipcode(ctx context.Context, zipcode string) (entity.Weather, error) {
+	time.Sleep(5 * time.Millisecond) // simulate a delay to show the span start difference in zipkin graph
+
 	log.Printf("[zipcode-weather] getting weather for zipcode %s\n", zipcode)
 	adapterCtx, adapterSpan := util.StartSpan(ctx)
 	adapterSpan.SetAttributes(attribute.String("zipcode", zipcode))
+
+	adapterSpan.AddEvent("getting weather by zipcode adapter started")
+	defer adapterSpan.AddEvent("getting weather by zipcode adapter finished")
 
 	url := fmt.Sprintf("%s/weather/%s", config.ZipcodeWeatherBaseURL, zipcode)
 

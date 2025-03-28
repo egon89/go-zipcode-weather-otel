@@ -3,6 +3,11 @@ run:
 	-make down
 	docker compose --profile app up --build
 
+rund:
+	-make down
+	docker compose --profile app up -d --build
+	docker compose ps
+
 run-otel:
 	-make down
 	docker compose up

@@ -31,8 +31,8 @@ func NewWeatherHandler(getWeatherByZipcode usecase.GetWeatherByZipcodeInterface)
 
 func (h *WeatherHandler) WeatherByZipcode(w http.ResponseWriter, r *http.Request) {
 	ctx, span := util.StartSpan(r.Context())
-	span.SetAttributes(util.RequestIdToAttribute(ctx))
 	defer span.End()
+	span.SetAttributes(util.RequestIdToAttribute(ctx))
 
 	var req WeatherRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

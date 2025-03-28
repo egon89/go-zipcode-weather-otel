@@ -24,9 +24,13 @@ func NewViaCepAdapter() *ViaCepAdapter {
 
 func (vc *ViaCepAdapter) GetCityNameByZipcode(ctx context.Context, zipcode string) (string, error) {
 	log.Printf("[viaCep] getting city name for zipcode %s\n", zipcode)
+
 	_, adapterSpan := utils.StartSpan(ctx)
 	defer adapterSpan.End()
 	adapterSpan.SetAttributes(attribute.String("zipcode", zipcode))
+
+	adapterSpan.AddEvent("getting city name by zipcode adapter started")
+	defer adapterSpan.AddEvent("getting city name by zipcode adapter finished")
 
 	url := fmt.Sprintf("%s/%s/json", config.ViaCepBaseURL, zipcode)
 
