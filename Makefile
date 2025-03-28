@@ -20,3 +20,9 @@ zipcode_sp:
 
 zipcode_poa:
 	curl -X POST http://localhost:8081/weather -H "Content-Type: application/json" -d '{"cep": "90010000"}' --verbose
+
+zipcode_invalid:
+	curl -X POST http://localhost:8081/weather -H "Content-Type: application/json" -d '{"cep": "9a010000"}' --verbose
+
+zipcode_not_found:
+	curl -X POST http://localhost:8081/weather -H "Content-Type: application/json" -d '{"cep": "00000000"}' --verbose
