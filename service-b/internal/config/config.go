@@ -12,6 +12,7 @@ var (
 	ViaCepBaseURL     string
 	WeatherAPIBaseURL string
 	WeatherAPIKey     string
+	OtelCollectorHost string
 )
 
 func LoadEnv() {
@@ -23,6 +24,7 @@ func LoadEnv() {
 	ViaCepBaseURL = GetEnv("VIA_CEP_BASE_URL", "")
 	WeatherAPIBaseURL = GetEnv("WEATHER_API_BASE_URL", "")
 	WeatherAPIKey = GetEnv("WEATHER_API_KEY", "")
+	OtelCollectorHost = GetEnv("OTEL_COLLECTOR_HOST", "")
 }
 
 func GetEnv(key, fallback string) string {

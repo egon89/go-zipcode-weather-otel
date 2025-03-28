@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -44,7 +45,7 @@ func TestGetTemperatureByCity(t *testing.T) {
 			}()
 
 			wa := NewWeatherApiAdapter()
-			temp, err := wa.GetTemperatureByCity(tt.city)
+			temp, err := wa.GetTemperatureByCity(context.Background(), tt.city)
 
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedTemp, temp)

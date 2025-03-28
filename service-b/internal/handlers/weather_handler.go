@@ -27,9 +27,13 @@ func NewWeatherHandler(getWeatherByZipcode usecase.GetWeatherByZipcodeInterface)
 }
 
 func (h *WeatherHandler) GetWeather(w http.ResponseWriter, r *http.Request) {
+	ctx, span := utils.StartSpan(r.Context())
+	span.SetAttributes(utils.RequestIdToAttribute(ctx))
+	defer span.End()
+
 	zipcodeStr := chi.URLParam(r, "zipcode")
 
-	output, err := h.usecase.Execute(zipcodeStr)
+	output, err := h.usecase.Execute(ctx, zipcodeStr)
 	if err != nil {
 		HandlerHttpError(w, err)
 		return

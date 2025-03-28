@@ -1,5 +1,7 @@
 package ports
 
+import "context"
+
 type LocationPort interface {
-	GetCityNameByZipcode(zipcode string) (string, error)
+	GetCityNameByZipcode(ctx context.Context, zipcode string) (string, error)
 }

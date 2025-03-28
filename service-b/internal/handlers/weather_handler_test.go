@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,7 +12,7 @@ import (
 
 type MockGetWeatherByZipcode struct{}
 
-func (m *MockGetWeatherByZipcode) Execute(zipcode string) (usecase.GetWeatherByZipcodeOutputDto, error) {
+func (m *MockGetWeatherByZipcode) Execute(ctx context.Context, zipcode string) (usecase.GetWeatherByZipcodeOutputDto, error) {
 	return usecase.GetWeatherByZipcodeOutputDto{
 		TempCelcius:    25.0,
 		TempFahrenheit: 77.0,

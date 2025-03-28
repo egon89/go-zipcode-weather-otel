@@ -1,5 +1,7 @@
 package ports
 
+import "context"
+
 type TemperaturePort interface {
-	GetTemperatureByCity(city string) (float64, error)
+	GetTemperatureByCity(ctx context.Context, city string) (float64, error)
 }

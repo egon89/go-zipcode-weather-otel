@@ -7,12 +7,15 @@ import (
 	"github.com/egon89/go-zipcode-weather/internal/adapters"
 	"github.com/egon89/go-zipcode-weather/internal/config"
 	"github.com/egon89/go-zipcode-weather/internal/handlers"
+	"github.com/egon89/go-zipcode-weather/internal/middleware"
 	"github.com/egon89/go-zipcode-weather/internal/usecase"
 	"github.com/go-chi/chi/v5"
 )
 
 func main() {
 	config.LoadEnv()
+	shutdown := config.InitTracer()
+	defer shutdown()
 
 	viaCepAdapter := adapters.NewViaCepAdapter()
 	weatherApiAdapter := adapters.NewWeatherApiAdapter()
@@ -20,6 +23,8 @@ func main() {
 		usecase.NewGetWeatherByZipcode(viaCepAdapter, weatherApiAdapter))
 
 	r := chi.NewRouter()
+	r.Use(middleware.RequestId)
+	r.Use(middleware.Tracer)
 
 	r.Get("/weather/{zipcode}", weatherHandler.GetWeather)
 

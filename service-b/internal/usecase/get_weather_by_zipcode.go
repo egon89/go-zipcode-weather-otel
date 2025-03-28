@@ -1,12 +1,15 @@
 package usecase
 
 import (
+	"context"
 	"log"
 	"regexp"
 
 	"github.com/egon89/go-zipcode-weather/internal/entity"
 	"github.com/egon89/go-zipcode-weather/internal/errors"
 	"github.com/egon89/go-zipcode-weather/internal/ports"
+	"github.com/egon89/go-zipcode-weather/internal/utils"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 type GetWeatherByZipcode struct {
@@ -22,7 +25,7 @@ type GetWeatherByZipcodeOutputDto struct {
 }
 
 type GetWeatherByZipcodeInterface interface {
-	Execute(zipcode string) (GetWeatherByZipcodeOutputDto, error)
+	Execute(ctx context.Context, zipcode string) (GetWeatherByZipcodeOutputDto, error)
 }
 
 func NewGetWeatherByZipcode(locationPort ports.LocationPort, TemperaturePort ports.TemperaturePort) *GetWeatherByZipcode {
@@ -32,19 +35,23 @@ func NewGetWeatherByZipcode(locationPort ports.LocationPort, TemperaturePort por
 	}
 }
 
-func (g *GetWeatherByZipcode) Execute(zipcode string) (GetWeatherByZipcodeOutputDto, error) {
+func (g *GetWeatherByZipcode) Execute(ctx context.Context, zipcode string) (GetWeatherByZipcodeOutputDto, error) {
 	if err := g.validateZipcode(zipcode); err != nil {
 		return GetWeatherByZipcodeOutputDto{}, err
 	}
 
-	city, err := g.LocationPort.GetCityNameByZipcode(zipcode)
+	ctxUseCase, adapterSpan := utils.StartSpan(ctx)
+	defer adapterSpan.End()
+	adapterSpan.SetAttributes(attribute.String("zipcode", zipcode))
+
+	city, err := g.LocationPort.GetCityNameByZipcode(ctxUseCase, zipcode)
 	if err != nil {
 		return GetWeatherByZipcodeOutputDto{}, errors.ErrZipcodeNotFound
 	}
 
 	log.Printf("getting weather for city %s\n", city)
 
-	tempCelcius, err := g.TemperaturePort.GetTemperatureByCity(city)
+	tempCelcius, err := g.TemperaturePort.GetTemperatureByCity(ctxUseCase, city)
 	if err != nil {
 		return GetWeatherByZipcodeOutputDto{}, errors.ErrTemperatureNotFound
 	}

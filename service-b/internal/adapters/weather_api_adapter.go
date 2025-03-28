@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -8,6 +9,8 @@ import (
 	"net/url"
 
 	"github.com/egon89/go-zipcode-weather/internal/config"
+	"github.com/egon89/go-zipcode-weather/internal/utils"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 type WeatherApiAdapter struct{}
@@ -22,7 +25,11 @@ func NewWeatherApiAdapter() *WeatherApiAdapter {
 	return &WeatherApiAdapter{}
 }
 
-func (wa *WeatherApiAdapter) GetTemperatureByCity(city string) (float64, error) {
+func (wa *WeatherApiAdapter) GetTemperatureByCity(ctx context.Context, city string) (float64, error) {
+	_, adapterSpan := utils.StartSpan(ctx)
+	defer adapterSpan.End()
+	adapterSpan.SetAttributes(attribute.String("city", city))
+
 	escapedCity := url.QueryEscape(city)
 	url := fmt.Sprintf("%s/v1/current.json?key=%s&q=%s", config.WeatherAPIBaseURL, config.WeatherAPIKey, escapedCity)
 

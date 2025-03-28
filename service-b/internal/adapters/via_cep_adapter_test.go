@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -38,7 +39,7 @@ func TestViaCepAdapter_GetCityNameByZipcode_Success(t *testing.T) {
 	}()
 
 	adapter := NewViaCepAdapter()
-	city, err := adapter.GetCityNameByZipcode(cep)
+	city, err := adapter.GetCityNameByZipcode(context.Background(), cep)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedCity, city)
@@ -60,7 +61,7 @@ func TestViaCepAdapter_GetCityNameByZipcode_NotFound(t *testing.T) {
 	}()
 
 	adapter := NewViaCepAdapter()
-	city, err := adapter.GetCityNameByZipcode(cep)
+	city, err := adapter.GetCityNameByZipcode(context.Background(), cep)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", city)

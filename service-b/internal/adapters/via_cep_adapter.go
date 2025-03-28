@@ -1,12 +1,15 @@
 package adapters
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/egon89/go-zipcode-weather/internal/config"
+	"github.com/egon89/go-zipcode-weather/internal/utils"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 type ViaCepAdapter struct{}
@@ -19,8 +22,11 @@ func NewViaCepAdapter() *ViaCepAdapter {
 	return &ViaCepAdapter{}
 }
 
-func (vc *ViaCepAdapter) GetCityNameByZipcode(zipcode string) (string, error) {
+func (vc *ViaCepAdapter) GetCityNameByZipcode(ctx context.Context, zipcode string) (string, error) {
 	log.Printf("[viaCep] getting city name for zipcode %s\n", zipcode)
+	_, adapterSpan := utils.StartSpan(ctx)
+	defer adapterSpan.End()
+	adapterSpan.SetAttributes(attribute.String("zipcode", zipcode))
 
 	url := fmt.Sprintf("%s/%s/json", config.ViaCepBaseURL, zipcode)
 
